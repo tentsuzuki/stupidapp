@@ -1,0 +1,47 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Query</title>
+    <script>
+        async function searchAPI() {
+            const query = document.getElementById('queryInput').value;
+            
+            if (!query) {
+                document.getElementById('result').textContent = "Please enter a query.";
+                return;
+            }
+
+            try {
+                const response = await fetch('/search', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ query: query }),
+                });
+
+                // Ensure the response is OK and parse it
+                if (!response.ok) {
+                    throw new Error(`Server error: ${response.status}`);
+                }
+
+                const data = await response.json();
+                document.getElementById('result').textContent = JSON.stringify(data, null, 4);
+
+            } catch (error) {
+                document.getElementById('result').textContent = `Error: ${error.message}`;
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>Search API</h1>
+    <input type="text" id="queryInput" placeholder="Enter query (e.g., nickname or email)">
+    <button onclick="searchAPI()">Search</button>
+    
+    <pre id="result"></pre>
+</body>
+</html>
